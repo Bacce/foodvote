@@ -2,11 +2,27 @@
 
 Let's vote where to have lunch today.
 
-
 Stolen the socketio setup from https://github.com/redbaron76/nextjs-socketio-chat/tree/main/
 
+## Deployment
 
+Use pm2 for running it in the background
+First install pm2 globally
 
+$ sudo npm install pm2 -g
+
+Then you can start from the app folder.
+But before that, run the build
+
+$ pm2 start npm --name foodvote -- start
+
+And you can list and delete the running projects
+
+$ pm2 list
+
+$ pm2 delete <PROJECT_NAME>
+
+https://www.youtube.com/watch?v=x6ci2iCckWc&t=939s&ab_channel=TheDigitalCEO
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
