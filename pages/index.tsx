@@ -1,51 +1,102 @@
-import React, { useState, useEffect } from "react";
-import SocketIOClient from "socket.io-client";
+import React, { useState, useEffect, useRef } from 'react';
+import SocketIOClient from 'socket.io-client';
+import { IChoice, IOption } from '../types';
 
-interface IMsg {
-  user: string;
-  msg: string;
-}
-
-interface IOption {
-  id: number;
-  name:string;
-  type:string;
-  lat:number;
-  lon:number;
-}
-
-// component
 const Index: React.FC = () => {
-  const [user, setUser] = useState("");
+  const userInputRef = useRef<any>();
+  const [user, setUser] = useState('');
   const [connected, setConnected] = useState<boolean>(false);
-  const [choices, setChoices] = useState<IMsg[]>([]);
+  const [choices, setChoices] = useState<IChoice[]>([]);
   const [options, setOptions] = useState<IOption[]>([]);
 
-  useEffect((): any => {
+  const handleSaveUser = () => {
+    const username = userInputRef.current.value;
+
+    if (username) {
+      console.log('store username', username);
+      localStorage.setItem('username', username);
+      setUser(username);
+    } else {
+      alert('please enter username');
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.setItem('username', '');
+    setUser('');
+  };
+
+  const sendMessage = async (msg: number) => {
+    if (msg > -1) {
+      const message: IChoice = {
+        user,
+        msg: String(msg),
+      };
+
+      fetch('/api/choice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+    }
+  };
+
+  const getOptions = () => {
     // Get all the options to select from
-    fetch("/api/options", {
-      method: "GET",
+    fetch('/api/options', {
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     })
-    .then((response) => response.json())
-    .then((data)=>{setOptions(data)})
-    .catch((e)=>{console.error("ERROR: Options request error",e)});
+      .then((response) => response.json())
+      .then((data) => {
+        setOptions(data);
+      })
+      .catch((e) => {
+        console.error('ERROR: request error', e);
+      });
+  };
 
-    // connect to socket server
+  const getChoices = () => {
+    // Get all the options to select from
+    fetch('/api/choice', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setChoices(data);
+      })
+      .catch((e) => {
+        console.error('ERROR: request error', e);
+      });
+  };
+
+  useEffect((): any => {
+    const username = localStorage.getItem('username');
+    console.log('Local get username', username);
+    if (username) {
+      setUser(username);
+    }
+
+    getOptions();
+    getChoices();
+
     const socket = SocketIOClient.connect(process.env.BASE_URL, {
-      path: "/api/socketio",
+      path: '/api/socketio',
     });
 
-    // log socket connection
-    socket.on("connect", () => {
-      console.log("SOCKET CONNECTED!", socket.id);
+    socket.on('connect', () => {
+      console.log('SOCKET CONNECTED!', socket.id);
       setConnected(true);
     });
 
-    socket.on("allChoices", (allChoices: IMsg[]) => {
-      console.log("allMessage", allChoices);
+    socket.on('allChoices', (allChoices: IChoice[]) => {
       setChoices([...allChoices]);
     });
 
@@ -53,57 +104,68 @@ const Index: React.FC = () => {
     if (socket) return () => socket.disconnect();
   }, []);
 
-  const sendMessage = async (msg:any) => {
-    if (msg) {
-      // build message obj
-      const message: IMsg = {
-        user,
-        msg,
-      };
+  return (
+    <>
+      <nav>
+        {user ? (
+          <>
+            welcome {user}
+            <button onClick={handleLogout}>logout</button>
+          </>
+        ) : (
+          <></>
+        )}
+        <hr />
+      </nav>
 
-      // dispatch message to other users
-      fetch("/api/choice", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(message),
-      });
-    }
-  };
+      {connected ? (
+        <>
+          {user ? (
+            <>
+              <div>
+                {options.map((option, index) => (
+                  <div key={`options-container-${index}`}>
+                    <button
+                      onClick={() => {
+                        sendMessage(option.id);
+                      }}
+                    >
+                      {option.name}
+                    </button>
 
-  return (<>{connected ? (<>
-        User:<input
-          type="text"
-          value={user}
-          onChange={(e) => {
-            setUser(e.target.value);
-          }}
-        />
-
-        <div>
-          {options.map((option, index)=>(<div key={index}>
-            <button onClick={()=>{sendMessage(option.id)}}>{option.name}</button>
-            {choices.map((choice)=>{return(Number(choice.msg)===option.id?<span>{choice.user} - </span>:<></>)})}
-            </div>))}
-        </div>
-
-        <div>
-          {choices.length ? (
-            choices.map((choice, i) => (
-              <div key={"msg_" + i}>
-                <span>
-                  {choice.user}
-                </span>
-                : {choice.msg}
+                    {choices.map((choice, id) => {
+                      return Number(choice.msg) === option.id ? (
+                        <span key={`user-${id}`}>{choice.user} - </span>
+                      ) : (
+                        <></>
+                      );
+                    })}
+                  </div>
+                ))}
               </div>
-            ))
+            </>
           ) : (
-            <>NoMsg</>
+            // Select user first
+            <>
+              User:
+              <input
+                ref={userInputRef}
+                autoFocus
+                type="text"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSaveUser();
+                  }
+                }}
+              />
+              <button onClick={handleSaveUser}>Login</button>
+            </>
           )}
-        </div>
-      </>):(<>Initializing...</>)}
-      </>
+        </>
+      ) : (
+        <>Initializing...</>
+      )}
+    </>
   );
 };
 

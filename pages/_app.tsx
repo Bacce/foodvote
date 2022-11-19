@@ -1,6 +1,6 @@
-import { NextPage } from "next";
+import { NextPage } from 'next';
 
-const App: NextPage = ({ Component, pageProps }:any) => {
+const App: NextPage = ({ Component, pageProps }: any) => {
   return (
     <>
       <Component {...pageProps} />
