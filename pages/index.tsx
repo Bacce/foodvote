@@ -93,6 +93,7 @@ const Index: React.FC = () => {
     getOptions();
     getChoices();
 
+    // @ts-ignore:next-line
     const socket = SocketIOClient.connect(process.env.BASE_URL, {
       path: '/api/socketio',
     });
