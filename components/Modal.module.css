@@ -1,0 +1,15 @@
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 400px;
+  width: 80%;
+  background: #5e5f59;
+  border-radius: 20px;
+  padding: 20px;
+  color: white;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}

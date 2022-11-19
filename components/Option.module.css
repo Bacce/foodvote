@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+  border-bottom: 1px solid #aaa597;
+}
+
+.titleContainer {
+  flex-basis: 200px;
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background-color: #d8d6cf;
+  color: #24231e;
+  padding: 3px 0px 3px 10px;
+  margin: 3px 5px;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+
+.titleContainer:hover {
+  background-color: #c1bdb3;
+}
+
+.voteContainer {
+  display: flex;
+  border-left: 1px solid #aaa597;
+  padding: 2px 5px;
+  flex-wrap: wrap;
+  align-items: center;
+}

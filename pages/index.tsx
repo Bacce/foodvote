@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SocketIOClient from 'socket.io-client';
+import { Button } from '../components/Button';
+import { Modal } from '../components/Modal';
+import { Navigation } from '../components/Navigation';
+import { Option } from '../components/Option';
+import { PageContainer } from '../components/PageContainer';
+import { Pill } from '../components/Pill';
+import { Spacer } from '../components/Spacer';
 import { IChoice, IOption } from '../types';
 
 const Index: React.FC = () => {
@@ -13,7 +20,6 @@ const Index: React.FC = () => {
     const username = userInputRef.current.value;
 
     if (username) {
-      console.log('store username', username);
       localStorage.setItem('username', username);
       setUser(username);
     } else {
@@ -106,65 +112,58 @@ const Index: React.FC = () => {
 
   return (
     <>
-      <nav>
-        {user ? (
+      <Navigation user={user ? user : undefined} onLogoutClick={handleLogout} />
+      <PageContainer>
+        {connected ? (
           <>
-            welcome {user}
-            <button onClick={handleLogout}>logout</button>
+            {user ? (
+              <>
+                <div>
+                  {options.map((option, index) => (
+                    <Option
+                      key={`options-container-${index}`}
+                      onClick={() => sendMessage(option.id)}
+                      title={option.name}
+                      count={
+                        choices.filter((item) => item.msg === String(index))
+                          .length
+                      }
+                    >
+                      {choices.map((choice, id) => {
+                        return Number(choice.msg) === option.id ? (
+                          <Pill key={`user-${id}`} title={choice.user} />
+                        ) : (
+                          <></>
+                        );
+                      })}
+                    </Option>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <Modal>
+                <h1>Welcome</h1>
+                <input
+                  ref={userInputRef}
+                  autoFocus
+                  type="text"
+                  placeholder="Username"
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSaveUser();
+                    }
+                  }}
+                />
+                <Spacer />
+
+                <Button onClick={handleSaveUser}>Login</Button>
+              </Modal>
+            )}
           </>
         ) : (
-          <></>
+          <>Initializing...</>
         )}
-        <hr />
-      </nav>
-
-      {connected ? (
-        <>
-          {user ? (
-            <>
-              <div>
-                {options.map((option, index) => (
-                  <div key={`options-container-${index}`}>
-                    <button
-                      onClick={() => {
-                        sendMessage(option.id);
-                      }}
-                    >
-                      {option.name}
-                    </button>
-
-                    {choices.map((choice, id) => {
-                      return Number(choice.msg) === option.id ? (
-                        <span key={`user-${id}`}>{choice.user} - </span>
-                      ) : (
-                        <></>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            // Select user first
-            <>
-              User:
-              <input
-                ref={userInputRef}
-                autoFocus
-                type="text"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSaveUser();
-                  }
-                }}
-              />
-              <button onClick={handleSaveUser}>Login</button>
-            </>
-          )}
-        </>
-      ) : (
-        <>Initializing...</>
-      )}
+      </PageContainer>
     </>
   );
 };

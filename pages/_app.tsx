@@ -1,3 +1,4 @@
+import '../styles.css';
 import { NextPage } from 'next';
 
 const App: NextPage = ({ Component, pageProps }: any) => {

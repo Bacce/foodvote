@@ -1,3 +1,7 @@
+export interface wChild {
+    children: any;
+}
+
 export interface IChoice {
     user: string;
     msg: string;

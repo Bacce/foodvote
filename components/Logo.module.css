@@ -1,0 +1,7 @@
+.container {
+  background-image: url('/fud.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 41px;
+  width: 140px;
+}

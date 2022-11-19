@@ -5,7 +5,6 @@ const allChoices: IChoice[] = [];
 
 export default (req: NextApiRequest, res: any) => {
   if (req.method === "GET") {
-    console.log("GET ALL CHOICES");
     res.status(201).json(allChoices);
   }
 
