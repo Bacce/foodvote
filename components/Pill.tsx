@@ -3,7 +3,7 @@ import Styles from './Pill.module.css';
 
 export const Pill = ({ title, count }: { title: string; count?: boolean }) => {
   let color;
-  if (!count) {
+  if (!count && title) {
     color = generateColor(title);
   } else {
     color = 'ffca42';
