@@ -10,6 +10,7 @@ const options: IOption[] = [
   { "id": 4, "name": "Belozzo", "cat": foodCategory.italian, "lat": 47.5051828, "long": 19.0625801 },
   { "id": 5, "name": "Buddha Original", "cat": foodCategory.thai, "lat": 47.5039895, "long": 19.0621469 },
   { "id": 6, "name": "Burger King", "cat": foodCategory.american, "lat": 47.5051828, "long": 19.0625801 },
+  { "id": 27, "name": "Csirke Csibész", "cat": foodCategory.grill, "lat": 0, "long": 0 },
   { "id": 7, "name": "Hummus Bar", "cat": foodCategory.middleEast, "lat": 47.5053989, "long": 19.0528409 },
   { "id": 8, "name": "Indigó", "cat": foodCategory.indian, "lat": 47.5071361, "long": 19.0524011 },
   { "id": 9, "name": "Istanbul Kebab", "cat": foodCategory.turkish, "lat": 47.5021174, "long": 19.0475291 },
